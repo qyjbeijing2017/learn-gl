@@ -7,7 +7,10 @@ function App() {
 
   useEffect(() => {
     if(!canvasRef.current) return;
-    return createEngine(canvasRef.current);
+    const engine = createEngine(canvasRef.current);
+    return () => {
+      engine.stopped = true;
+    }
   }, [canvasRef])
 
 

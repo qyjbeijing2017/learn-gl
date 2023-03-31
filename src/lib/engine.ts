@@ -1,8 +1,10 @@
+import { vec3 } from 'gl-matrix';
 import * as twgl from 'twgl.js';
 import { Camera } from './camera';
 import { IEngine } from './engine.interface';
 import GameObject from './game-object';
 import { creatCubeObject } from './objects/cube.object';
+import { createPlaneObect } from './objects/plane.object';
 
 
 export const createEngine = (canvas: HTMLCanvasElement) => {
@@ -12,6 +14,7 @@ export const createEngine = (canvas: HTMLCanvasElement) => {
     }
 
     const cube = creatCubeObject(gl);
+    const plane = createPlaneObect(gl);
 
     const engine: IEngine = {
         stopped: false,
@@ -34,10 +37,10 @@ export const createEngine = (canvas: HTMLCanvasElement) => {
         engine.mainCamera.setScreenDimensions(gl.canvas.width, gl.canvas.height);
 
         gl.clear(gl.COLOR_BUFFER_BIT);
-        const viewMatrix = engine.mainCamera.transform.worldMatrix;
+        const viewMatrix = engine.mainCamera.transform.viewMatrix;
         const projectionMatrix = engine.mainCamera.projectionMatrix;
         engine.objects.forEach(object => {
-            if(object.material && object.mesh) {
+            if (object.material && object.mesh) {
                 const worldMatrix = object.transform.worldMatrix;
                 const uniforms = Object.assign({}, object.material.uniforms, {
                     u_world: worldMatrix,
@@ -57,7 +60,5 @@ export const createEngine = (canvas: HTMLCanvasElement) => {
     };
     requestAnimationFrame(render);
 
-    return () => {
-        engine.stopped = true;
-    }
+    return engine;
 }
